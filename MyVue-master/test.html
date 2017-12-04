@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+</head>
+<body>
+<div id="test">
+
+</div>
+<script>
+
+	var a= {}
+	Object.defineProperty(a,"b",{
+		set:function(newValue){
+			console.log("你要赋值给我,我的新值是",newValue)
+		},
+		get:function(){
+			console.log("你取我的值")
+			return 2 //注意这里，我硬编码返回2
+		}
+	})
+	a.b = 'abc'   //打印 你要赋值给我,我的新值是1
+	console.log(a.b)
+
+
+</script>
+</body>
+</html>

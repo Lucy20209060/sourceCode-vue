@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVVM</title>
+</head>
+<body>
+<script src="src/Observer.js"></script>
+<script src="src/Watcher.js"></script>
+<script src="src/Compiler.js"></script>
+<script src="src/MVVM.js"></script>
+<div id="msg">
+    <p class="title">https://github.com/fwing1987/MyVue</p>
+
+
+
+    这是普通文本{{b.c}}
+    <p>{{message}}</p>
+
+    <p><input type="text" v-model="message"/></p>
+
+    <p>{{message}}</p>
+
+    --------------------<br />
+
+    {{a}}<input v-model="a" /><br />
+
+    --------------------<br />
+
+    <p><button type="button" v-on:click="clickBtn()">click me</button></p>
+</div>
+<script>
+        var mvvm = new MVVM({
+            el:"msg",
+            data:{
+                a:56,
+                b:{
+                    c:1,
+                },
+                message:"hello world!"
+            },
+            methods:{
+                clickBtn:function(){
+                    this.message = "clicked";
+
+                    console.log(this)
+                }
+            }
+        });
+
+</script>
+</body>
+</html>
