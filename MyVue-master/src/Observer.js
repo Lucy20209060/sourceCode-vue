@@ -1,5 +1,6 @@
 /**
- Observer是将输入的Plain Object进行处理,利用Object.defineProperty转化为getter与setter,从而在赋值与取值时进行拦截
+ Observer是将输入的Plain Object进行处理,
+ 利用Object.defineProperty转化为getter与setter,从而在赋值与取值时进行拦截
  这是Vue响应式框架的基础
  */
 function isObject(obj){
@@ -39,8 +40,7 @@ Observer.prototype.defineReactive = function(data,key,value){
             configurable:默认false，总开关，一旦为false，就不能再设置他的（value，writable，configurable）
             enumerable:默认false，是否能在for...in循环中遍历出来或在Object.keys中列举出来
             get
-            set
-            
+            set         
     */
     Object.defineProperty(data,key,{
         enumerable:true,
@@ -54,7 +54,7 @@ Observer.prototype.defineReactive = function(data,key,value){
             return value;
         },
         set:function(newVal){
-            console.log("intercept set:"+key);
+            console.log("intercept set:"+key,newVal);
             if(newVal == value){
                 return;
             }

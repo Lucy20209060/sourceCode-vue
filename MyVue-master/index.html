@@ -12,12 +12,9 @@
 <div id="msg">
     <p class="title">https://github.com/fwing1987/MyVue</p>
 
+    <p>这是普通文本： {{b.c}}</p>
 
-
-    这是普通文本{{b.c}}
-    <p>{{message}}</p>
-
-    <p><input type="text" v-model="message"/></p>
+    <p>input: <input type="text" v-model="message"/></p>
 
     <p>{{message}}</p>
 
@@ -35,7 +32,7 @@
             data:{
                 a:56,
                 b:{
-                    c:1,
+                    c:'哈哈哈哈',
                 },
                 message:"hello world!"
             },
