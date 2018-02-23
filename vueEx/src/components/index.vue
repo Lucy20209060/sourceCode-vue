@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        index
+        index11
     </div>
 </template>
 
@@ -26,7 +26,7 @@
             
         },
         created() {
-            console.log(window)
+            
         }
     }
 </script>
