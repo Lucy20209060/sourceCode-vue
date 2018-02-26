@@ -88,4 +88,6 @@ Vue.prototype._init = function (options?: Object) {
   }
   ```
 
-  
+一进来 给当前的vm添加一个唯一的_uid 然后vm._isVue设为true(监听对象变化时用于过滤vm)
+
+_isComponent是内部创建子组件时才会添加为true的属性 我们的例子直接走进else里面mergeOptions用于合并两个对象 不同于Object.assign的简单合并 它还对数据做了一系列的操作 且源码中多次用到该方法 所以后面会详细讲解该方法
