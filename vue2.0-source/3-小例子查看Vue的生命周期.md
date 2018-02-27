@@ -97,6 +97,7 @@ resolveConstructorOptions方法在Vue.extend中做了详细的解释 它的作�
 ```javascript
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  // 有super属性 说明Ctor是通过Vue.extend()方法创建的子类
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
@@ -120,3 +121,37 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
 }
 ```
 
+这里的Ctor就是vm.constructor 也就是vue对象 在上一篇中 我们提到 在 /src/core/global-api/index 中
+
+我们给Vue添加了一些全局的属性或方法
+
+```javascript
+Vue.options = Object.create(null)
+ASSET_TYPES.forEach(type => {
+  Vue.options[type + 's'] = Object.create(null)
+})
+
+// this is used to identify the "base" constructor to extend all plain-object
+// components with in Weex's multi-instance scenarios.
+Vue.options._base = Vue
+
+extend(Vue.options.components, builtInComponents)
+```
+
+所以这里打印Ctor.options 如下所示
+
+```javascript
+Ctor.options = {
+  components: {
+    KeepAlive,
+    Transition,
+    TransitionGroup
+  },
+  directives: {
+    model,
+    show
+  },
+  filters: {},
+  _base: Vue
+}
+```
