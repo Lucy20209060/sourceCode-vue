@@ -155,3 +155,79 @@ Ctor.options = {
   _base: Vue
 }
 ```
+
+Ctor.super是在调用Vue.extend时 才会添加的属性 这里先直接跳过
+
+所以mergeOptions的第一个参数就是上面的Ctor.options 第二个参数是我们传入的options 第三个参数是当前对象vm
+
+mergeOptions
+
+mergeOptions是Vue中处理属性的合并策略的地方
+
+```javascript
+export function mergeOptions (
+  parent: Object,
+  child: Object,
+  vm?: Component
+): Object {
+  if (process.env.NODE_ENV !== 'production') {
+  	// 如果有options.components，则判断是否组件名是否合法
+    checkComponents(child)
+  }
+  // 格式化child的props
+  normalizeProps(child)
+  // 格式化child的directives
+  normalizeDirectives(child)
+  // options.extends
+  const extendsFrom = child.extends 
+  if (extendsFrom) {
+    parent = typeof extendsFrom === 'function'
+      ? mergeOptions(parent, extendsFrom.options, vm)
+      : mergeOptions(parent, extendsFrom, vm)
+  }
+  // options.mixins
+  if (child.mixins) { 
+    for (let i = 0, l = child.mixins.length; i < l; i++) {
+      let mixin = child.mixins[i]
+      if (mixin.prototype instanceof Vue) {
+        mixin = mixin.options
+      }
+      parent = mergeOptions(parent, mixin, vm)
+    }
+  }
+  const options = {}
+  let key
+  for (key in parent) {
+    mergeField(key)
+  }
+  for (key in child) {
+    if (!hasOwn(parent, key)) {
+      mergeField(key)
+    }
+  }
+  function mergeField (key) {
+    const strat = strats[key] || defaultStrat
+    options[key] = strat(parent[key], child[key], vm, key)
+  }
+  return options
+}
+```
+
+前面和compoment props directives extends minxins相关的内容我们暂且忽略 optionMergeStrategies对象 来让我们手动去控制属性的合并策略 这里的starts[key]就是key属性的合并方法
+
+```javascript
+function mergeAssets (parentVal: ?Object, childVal: ?Object): Object {
+  const res = Object.create(parentVal || null)
+  return childVal
+    ? extend(res, childVal)
+    : res
+}
+
+config._assetTypes.forEach(function (type) {
+  strats[type + 's'] = mergeAssets
+})
+```
+
+_assetTypes就是component diretives filters 这三个的合并策略都一样 这里我们都返回了parentVal的一个子对象
+
+data属性的合并策略 也是Vue内置 如下
