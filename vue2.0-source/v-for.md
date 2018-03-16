@@ -117,3 +117,49 @@ value是属性值 key是属性名 index是索引值
 ```
 
 接着 就是根据ast结果 生成对应的render字符串
+
+在 src/compiler/codegen/index.js文件中 找到genFor函数中
+
+```javascript
+export function genFor (
+  el: any,
+  state: CodegenState,
+  altGen?: Function,
+  altHelper?: string
+): string {
+  const exp = el.for
+  const alias = el.alias
+  const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
+  const iterator2 = el.iterator2 ? `,${el.iterator2}` : ''
+
+  if (process.env.NODE_ENV !== 'production' &&
+    state.maybeComponent(el) &&
+    el.tag !== 'slot' &&
+    el.tag !== 'template' &&
+    !el.key
+  ) {
+    state.warn(
+      `<${el.tag} v-for="${alias} in ${exp}">: component lists rendered with ` +
+      `v-for should have explicit keys. ` +
+      `See https://vuejs.org/guide/list.html#key for more info.`,
+      true /* tip */
+    )
+  }
+
+  el.forProcessed = true // avoid recursion
+  return `${altHelper || '_l'}((${exp}),` +
+    `function(${alias}${iterator1}${iterator2}){` +
+      `return ${(altGen || genElement)(el, state)}` +
+    '})'
+}
+```
+这里 if 块是开发环境做一些校验 如果是自定义元素且不是 slot 和 template 则必须有 el.key
+
+最终返回的拼接后的字符串是一个 _l 函数 其中第一个参数是 el.for 即 object 第二个参数是一个函数 函数的参数是我们的三个变量 value , key , index 
+
+该函数返回值中再次调用 genElement 生成 p 元素的 render 字符串
+
+最后生成的render函数字符串为：
+
+  "_c('div',{attrs:{"id":"app"}},_l((object),function(value,key,index){return _c('p',[_v(_s(index)+". "+_s(key)+" : "+_s(value))])}))"
+
