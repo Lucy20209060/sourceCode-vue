@@ -199,3 +199,10 @@ export function renderList (
   return ret
 }
 ```
+我们这里传入的 val 就是 object ， render 就是生成 p 段落的 render 函数
+
+代码中的三段 if 判断 是因为我们 v-for 可以遍历的不止数组和对象 还有数组和字符串
+
+最终返回的 ret 是一个 VNode 数组 每一个元素都是一个 p 便签对应的 VNode 
+
+从上面的分析中 我们可以看出 v-for 影响的范围只是在生成 VNode 对象生成的个数 而对 VNode 内部没有影响
