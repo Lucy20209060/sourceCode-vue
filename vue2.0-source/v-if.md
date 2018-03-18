@@ -16,3 +16,28 @@ v-if 指令
 </script>
 ```
 
+生成ast
+
+与其他指令类似 parse 函数中 调用了一个单独的函数来处理 v-if 指令——processIf
+
+```javascript
+function processIf (el) {
+  const exp = getAndRemoveAttr(el, 'v-if')
+  if (exp) {
+    el.if = exp
+    addIfCondition(el, {
+      exp: exp,
+      block: el
+    })
+  } else {
+    if (getAndRemoveAttr(el, 'v-else') != null) {
+      el.else = true
+    }
+    const elseif = getAndRemoveAttr(el, 'v-else-if')
+    if (elseif) {
+      el.elseif = elseif
+    }
+  }
+}
+```
+
