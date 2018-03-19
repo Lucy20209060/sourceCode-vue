@@ -41,3 +41,19 @@ function processIf (el) {
 }
 ```
 
+我们这有三个 p 标签 所以会分别生成 ast 。end 和 chars 的处理就略过了 我们只看 start 中的处理
+
+1.v-if
+
+第一 p 便签 在执行 processIf 函数时 exp = getAndRemoveAttr(el,'v-if') 结果返回 value == 1 所以走到 if 块
+
+```javascript
+function addIfCondition (el, condition) {
+  if (!el.ifConditions) {
+    el.ifConditions = []
+  }
+  el.ifConditions.push(condition)
+}
+```
+
+addIfCondition 会给 el 添加一个 ifConditions 来保存当前 v-if 相关元素
