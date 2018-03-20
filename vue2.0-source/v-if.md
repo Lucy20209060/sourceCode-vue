@@ -77,3 +77,44 @@ if (currentParent && !element.forbidden) {
 }
 ```
 
+如果当前标签是 elseif 或 else,如果我们自己实现 首先想到的是从当前元素往前 找到第一个有 v-if 的标签 Vue中其实也是这样
+
+```javascript
+function processIfConditions (el, parent) {
+  const prev = findPrevElement(parent.children)
+  if (prev && prev.if) {
+    addIfCondition(prev, {
+      exp: el.elseif,
+      block: el
+    })
+  } else if (process.env.NODE_ENV !== 'production') {
+    warn(
+      `v-${el.elseif ? ('else-if="' + el.elseif + '"') : 'else'} ` +
+      `used on element <${el.tag}> without corresponding v-if.`
+    )
+  }
+}
+function findPrevElement (children: Array<any>): ASTElement | void {
+  let i = children.length
+  while (i--) {
+    if (children[i].type === 1) {
+      return children[i]
+    } else {
+      if (process.env.NODE_ENV !== 'production' && children[i].text !== ' ') {
+        warn(
+          `text "${children[i].text.trim()}" between v-if and v-else(-if) ` +
+          `will be ignored.`
+        )
+      }
+      children.pop()
+    }
+  }
+}
+```
+
+findPrevElement 会先拿到当前元素前面的兄弟节点 然后从后往前寻找第一个标签元素 夹在当前元素之间的文本节点会被删除 并在开发环境给予提示
+
+如果 prev 元素存在且 prev.if 存在 则把当前元素和条件添加到 prev 的 ifConditions 数组中
+
+从上面的代码可以看出 如果 element.elseif || element.else 返回 true 是不会走到 else 块 也就是说不会建立当前元素和 currentParent 元素的父子关系 我们的例子中 div 的 children 中会有 v-if 的标签
+
