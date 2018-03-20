@@ -117,4 +117,3 @@ findPrevElement 会先拿到当前元素前面的兄弟节点 然后从后往前
 如果 prev 元素存在且 prev.if 存在 则把当前元素和条件添加到 prev 的 ifConditions 数组中
 
 从上面的代码可以看出 如果 element.elseif || element.else 返回 true 是不会走到 else 块 也就是说不会建立当前元素和 currentParent 元素的父子关系 我们的例子中 div 的 children 中会有 v-if 的标签
-
