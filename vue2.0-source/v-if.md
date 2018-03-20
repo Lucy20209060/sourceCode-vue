@@ -43,7 +43,7 @@ function processIf (el) {
 
 我们这有三个 p 标签 所以会分别生成 ast 。end 和 chars 的处理就略过了 我们只看 start 中的处理
 
-1.v-if
+1. v-if
 
 第一 p 便签 在执行 processIf 函数时 exp = getAndRemoveAttr(el,'v-if') 结果返回 value == 1 所以走到 if 块
 
@@ -57,4 +57,23 @@ function addIfCondition (el, condition) {
 ```
 
 addIfCondition 会给 el 添加一个 ifConditions 来保存当前 v-if 相关元素
+
+2. v-else-if
+
+第二个 p 标签 同样会在 processIf 函数中进行处理 这次会走 else 并使得 el.elseif = "value == 2"
+
+接着往下执行 会走到如下判断条件
+
+```javascript
+if (currentParent && !element.forbidden) {
+  if (element.elseif || element.else) {
+    processIfConditions(element, currentParent)
+  } else if (element.slotScope) { // scoped slot
+    ...
+  } else {
+    currentParent.children.push(element)
+    element.parent = currentParent
+  }
+}
+```
 
