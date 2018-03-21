@@ -19,6 +19,36 @@ v-show 功能很简单 就是控制元素是否显示 v-show 的实现也比较�
   }
   ```
 
-  locateNode 是对自定义组件的 vnode 进行处理 获取真实dom元素的 vnode 如果当前元素包裹在 transition 组件中 说明我们添加了过渡的动画 此时 transition 值不为空
+locateNode 是对自定义组件的 vnode 进行处理 获取真实dom元素的 vnode 如果当前元素包裹在 transition 组件中 说明我们添加了过渡的动画 此时 transition 值不为空
 
-  
+vnode.data.show是一个标示，用于在过渡中对v-show的特殊处理。
+
+el.__vOriginalDisplay是保存元素显示时display的值是什么。如果value返回true（说明显示）且有动画且非IE9（IE9不支持动画），则执行显示动画，后设置el.style.display值。
+
+否则，直接通过value的值，设置它的展现还是隐藏。
+
+update
+
+```javascript
+update (el: any, { value, oldValue }: VNodeDirective, vnode: VNodeWithData) {
+    if (value === oldValue) return
+    vnode = locateNode(vnode)
+    const transition = vnode.data && vnode.data.transition
+    if (transition && !isIE9) {
+      vnode.data.show = true
+      if (value) {
+        enter(vnode, () => {
+          el.style.display = el.__vOriginalDisplay
+        })
+      } else {
+        leave(vnode, () => {
+          el.style.display = 'none'
+        })
+      }
+    } else {
+      el.style.display = value ? el.__vOriginalDisplay : 'none'
+    }
+  }
+```
+
+update是在页面diff之后调用，大体上的流程和bind类似，只不过这里多了一个消失时的动画处理。
