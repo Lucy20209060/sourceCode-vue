@@ -52,3 +52,21 @@ update (el: any, { value, oldValue }: VNodeDirective, vnode: VNodeWithData) {
 ```
 
 update是在页面diff之后调用，大体上的流程和bind类似，只不过这里多了一个消失时的动画处理。
+
+unbind
+
+```javascript
+unbind (
+  el: any,
+  binding: VNodeDirective,
+  vnode: VNodeWithData,
+  oldVnode: VNodeWithData,
+  isDestroy: boolean
+) {
+  if (!isDestroy) {
+    el.style.display = el.__vOriginalDisplay
+  }
+}
+```
+
+unbind中只做了一个处理，如果isDestroy返回false，说明我们当前的dom元素并没有真实销毁（diff过程中被复用），只是vnode中没有v-show的指令，这时，设置el.style.display等于初始值。这个地方为什么这样做，主要是为了解决一个bug，整个bug的缘由，里面已经表述的很清晰。
