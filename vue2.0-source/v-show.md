@@ -18,7 +18,7 @@ v-show 功能很简单 就是控制元素是否显示 v-show 的实现也比较�
     }
   }
   ```
-
+  
 locateNode 是对自定义组件的 vnode 进行处理 获取真实dom元素的 vnode 如果当前元素包裹在 transition 组件中 说明我们添加了过渡的动画 此时 transition 值不为空
 
 vnode.data.show是一个标示，用于在过渡中对v-show的特殊处理。
