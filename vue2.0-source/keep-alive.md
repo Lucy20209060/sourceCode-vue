@@ -32,3 +32,18 @@ export default {
 ```
 
 name不用多说，abstract: true这个条件我们自己定义组件时通常不会用，它是用来标识当前的组件是一个抽象组件，它自身不会渲染一个真实的DOM元素。比如在创建两个vm实例之间的父子关系时，会跳过抽象组件的实例:
+
+```javascript
+let parent = options.parent
+  if (parent && !options.abstract) {
+    while (parent.$options.abstract && parent.$parent) {
+      parent = parent.$parent
+    }
+    parent.$children.push(vm)
+}
+```
+
+props 表示我们可以传入 include 来匹配哪些组件可以缓存 exclude 来匹配哪些组件不缓存
+
+created 钩子函数调用时 会创建一个 this.cache 对象用户缓存他的钩子组件
+
