@@ -62,3 +62,19 @@ function pruneCacheEntry (vnode: ?VNode) {
 
 watch 是在我们改变 props 传入的值时 同时对 this.cache 缓存中的数据进行处理
 
+```javascript
+function pruneCache (cache: VNodeCache, filter: Function) {
+  for (const key in cache) {
+    const cachedNode: ?VNode = cache[key]
+    if (cachedNode) {
+      const name: ?string = getComponentName(cachedNode.componentOptions)
+      if (name && !filter(name)) {
+        pruneCacheEntry(cachedNode)
+        cache[key] = null
+      }
+    }
+  }
+}
+```
+
+抽象组件没有实际的DOM元素 所以也就没有 template 模板 它会有一个 render 函数 我们就来看着里面进行了哪些操作
