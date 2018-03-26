@@ -47,3 +47,18 @@ props 表示我们可以传入 include 来匹配哪些组件可以缓存 exclude
 
 created 钩子函数调用时 会创建一个 this.cache 对象用户缓存他的钩子组件
 
+destroyed 表示 keep-alive 被销毁时 会同时销毁它缓存的组件 并调用 deactivated 钩子函数
+
+```javascript
+function pruneCacheEntry (vnode: ?VNode) {
+  if (vnode) {
+    if (!vnode.componentInstance._inactive) {
+      callHook(vnode.componentInstance, 'deactivated')
+    }
+    vnode.componentInstance.$destroy()
+  }
+}
+```
+
+watch 是在我们改变 props 传入的值时 同时对 this.cache 缓存中的数据进行处理
+
