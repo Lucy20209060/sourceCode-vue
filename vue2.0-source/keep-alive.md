@@ -78,3 +78,34 @@ function pruneCache (cache: VNodeCache, filter: Function) {
 ```
 
 抽象组件没有实际的DOM元素 所以也就没有 template 模板 它会有一个 render 函数 我们就来看着里面进行了哪些操作
+
+```javascript
+render () {
+    const vnode: VNode = getFirstComponentChild(this.$slots.default)
+    const componentOptions: ?VNodeComponentOptions = vnode && vnode.componentOptions
+    if (componentOptions) {
+      // check pattern
+      const name: ?string = getComponentName(componentOptions)
+      if (name && (
+        (this.include && !matches(this.include, name)) ||
+        (this.exclude && matches(this.exclude, name))
+      )) {
+        return vnode
+      }
+      const key: ?string = vnode.key == null
+        // same constructor may get registered as different local components
+        // so cid alone is not enough (#3269)
+        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+        : vnode.key
+      if (this.cache[key]) {
+        vnode.componentInstance = this.cache[key].componentInstance
+      } else {
+        this.cache[key] = vnode
+      }
+      vnode.data.keepAlive = true
+    }
+    return vnode
+  }
+  ```
+
+首先 调用 getFirstComponentChild 方法 来获取 this.$slots.default 中的第一个元素
