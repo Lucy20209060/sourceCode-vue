@@ -109,3 +109,12 @@ render () {
   ```
 
 首先 调用 getFirstComponentChild 方法 来获取 this.$slots.default 中的第一个元素
+
+```javascript
+export function getFirstComponentChild (children: ?Array<VNode>): ?VNode {
+  return children && children.filter((c: VNode) => c && c.componentOptions)[0]
+}
+```
+
+从上面的方法我们可以看出 在我们会过滤掉非自定义的标签 然后获取第一个自定义标签所对应的 vnode 所以 如果 keep-alive 里面包裹的是 html 标签 是不会渲染的
+
