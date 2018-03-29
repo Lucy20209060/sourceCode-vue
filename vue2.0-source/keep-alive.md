@@ -128,3 +128,4 @@ function getComponentName (opts: ?VNodeComponentOptions): ?string {
 
 通过 getComponentName 方法来获取组件名 然后判断该组件是否合法 如果 include 不匹配 或 exclude 匹配 则说明组件不足要缓存 此时直接返回该 vnode
 
+否则 vnode.key 不存在则生成一个 存在则就用 vnode.key 作为key 然后把该 vnode 添加到 this.cache 中 并设置 vnode.data.keepAlive = true。 最终返回该 vnode
