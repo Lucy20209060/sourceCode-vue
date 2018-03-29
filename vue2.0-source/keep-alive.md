@@ -129,3 +129,7 @@ function getComponentName (opts: ?VNodeComponentOptions): ?string {
 通过 getComponentName 方法来获取组件名 然后判断该组件是否合法 如果 include 不匹配 或 exclude 匹配 则说明组件不足要缓存 此时直接返回该 vnode
 
 否则 vnode.key 不存在则生成一个 存在则就用 vnode.key 作为key 然后把该 vnode 添加到 this.cache 中 并设置 vnode.data.keepAlive = true。 最终返回该 vnode
+
+以上只是 render 函数执行的过程 keep-alive 本身也是个组件 在 render 函数调用生成 vnode 后 同样会走 __path__ 
+
+在创建和diff的过程中 也会调用init, prepath, insert和 destory钩子函数 不过 每个函数中所做的处理 和普通组件有所不同
