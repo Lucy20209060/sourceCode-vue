@@ -118,3 +118,13 @@ export function getFirstComponentChild (children: ?Array<VNode>): ?VNode {
 
 从上面的方法我们可以看出 在我们会过滤掉非自定义的标签 然后获取第一个自定义标签所对应的 vnode 所以 如果 keep-alive 里面包裹的是 html 标签 是不会渲染的
 
+然后获取 componentOptions,componentOptions 包含五个元素 {Ctor, propsData, listeners, tag, children}
+
+```javascript
+function getComponentName (opts: ?VNodeComponentOptions): ?string {
+  return opts && (opts.Ctor.options.name || opts.tag)
+}
+```
+
+通过 getComponentName 方法来获取组件名 然后判断该组件是否合法 如果 include 不匹配 或 exclude 匹配 则说明组件不足要缓存 此时直接返回该 vnode
+
