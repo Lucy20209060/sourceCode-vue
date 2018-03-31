@@ -186,3 +186,8 @@ insert (vnode: MountedComponentVNode) {
     }
   }
   ```
+
+在组件插入到页面后 如果是 vnode.data.keepAlive 返回true 则只调用 deactiveChildComponent 这里面主要是调用子组件的 dectivated 钩子函数 并设置 vm.directInactive 的标识状态 因为 vnode.data.keepAlive 为true的组件 是会被keep-alive缓存起来的
+
+所以不会直接调用它的 $destroy() 方法 上面我们也提到 当 keep-alive组件被销毁时 会触发它缓存中所有的组件 $destroy()
+
