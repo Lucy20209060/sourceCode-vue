@@ -191,3 +191,5 @@ insert (vnode: MountedComponentVNode) {
 
 所以不会直接调用它的 $destroy() 方法 上面我们也提到 当 keep-alive组件被销毁时 会触发它缓存中所有的组件 $destroy()
 
+因为 keep-alive 包裹的组件状态变化 还会触发其子组件的activated 或 deactivated 钩子函数 activateChildComponent 和 deactivateChildComponent 也会做一些这方面的处理
+
