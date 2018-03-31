@@ -133,3 +133,56 @@ function getComponentName (opts: ?VNodeComponentOptions): ?string {
 以上只是 render 函数执行的过程 keep-alive 本身也是个组件 在 render 函数调用生成 vnode 后 同样会走 __path__ 
 
 在创建和diff的过程中 也会调用init, prepath, insert和 destory钩子函数 不过 每个函数中所做的处理 和普通组件有所不同
+
+```javascript
+init (
+    vnode: VNodeWithData,
+    hydrating: boolean,
+    parentElm: ?Node,
+    refElm: ?Node
+  ): ?boolean {
+    if (!vnode.componentInstance || vnode.componentInstance._isDestroyed) {
+      const child = vnode.componentInstance = createComponentInstanceForVnode(
+        vnode,
+        activeInstance,
+        parentElm,
+        refElm
+      )
+      child.$mount(hydrating ? vnode.elm : undefined, hydrating)
+    } else if (vnode.data.keepAlive) {
+      // kept-alive components, treat as a patch
+      const mountedNode: any = vnode // work around flow
+      componentVNodeHooks.prepatch(mountedNode, mountedNode)
+    }
+  }
+  ```
+
+在 keep-alive 组件内调用__path__时 如果 render 返回的 vode 是第一次使用 则走正常的创建流程 如果之前创建过且添加了 vnode.data.keepAlive 则直接调用 prepath 方法 且传入的新旧 vonode 相同
+
+```javascript
+prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
+    const options = vnode.componentOptions
+    const child = vnode.componentInstance = oldVnode.componentInstance
+    updateChildComponent(
+      child,
+      options.propsData, // updated props
+      options.listeners, // updated listeners
+      vnode, // new parent vnode
+      options.children // new children
+    )
+  }
+  ```
+
+prepatch 函数做了哪些工作 之前也详细的介绍过 简单的总结 就是依据 vnode 中的数据 更新组件内容
+
+```javascript
+insert (vnode: MountedComponentVNode) {
+    if (!vnode.componentInstance._isMounted) {
+      vnode.componentInstance._isMounted = true
+      callHook(vnode.componentInstance, 'mounted')
+    }
+    if (vnode.data.keepAlive) {
+      activateChildComponent(vnode.componentInstance, true /* direct */)
+    }
+  }
+  ```
