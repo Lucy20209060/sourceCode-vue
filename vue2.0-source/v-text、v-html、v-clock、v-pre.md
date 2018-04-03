@@ -61,3 +61,47 @@ if (el.props) {
 
     _c('span',{domProps:{"textContent":_s(msg)}})
 
+在 patch 过程中的处理 和其他 data 中的数据一样 是通过钩子函数处理的
+
+```javascript
+function updateDOMProps (oldVnode: VNodeWithData, vnode: VNodeWithData) {
+  if (!oldVnode.data.domProps && !vnode.data.domProps) {
+    return
+  }
+  let key, cur
+  const elm: any = vnode.elm
+  const oldProps = oldVnode.data.domProps || {}
+  let props = vnode.data.domProps || {}
+  // clone observed objects, as the user probably wants to mutate it
+  if (props.__ob__) {
+    props = vnode.data.domProps = extend({}, props)
+  }
+
+  for (key in oldProps) {
+    if (props[key] == null) {
+      elm[key] = ''
+    }
+  }
+  for (key in props) {
+    cur = props[key]
+    if (key === 'textContent' || key === 'innerHTML') {
+      if (vnode.children) vnode.children.length = 0
+      if (cur === oldProps[key]) continue
+    }
+
+    if (key === 'value') {
+      // store value as _value as well since
+      // non-string values will be stringified
+      elm._value = cur
+      // avoid resetting cursor position when value is the same
+      const strCur = cur == null ? '' : String(cur)
+      if (shouldUpdateValue(elm, vnode, strCur)) {
+        elm.value = strCur
+      }
+    } else {
+      elm[key] = cur
+    }
+  }
+}
+```
+
