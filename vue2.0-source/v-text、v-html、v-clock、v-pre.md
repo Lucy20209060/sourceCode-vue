@@ -105,3 +105,8 @@ function updateDOMProps (oldVnode: VNodeWithData, vnode: VNodeWithData) {
 }
 ```
 
+首先会重置 oldProps 中 Props 上不存在的属性 然后遍历 props 中的属性 如果 key 值 textContent 或 innerHTML 则清除 child 的内容
+
+如果 key === 'value' 这里应该对 input select 等标签的特殊处理 否则 直接设置 elm.textContent = cur 以此来改变文本内容
+
+    v-html
