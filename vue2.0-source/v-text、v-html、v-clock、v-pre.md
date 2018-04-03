@@ -48,3 +48,16 @@ export function addProp (el: ASTElement, name: string, value: string) {
 }
 ```
 
+它会给 el.props 数组中添加一个对象 对象里保存的 name 和 value
+
+```javascript
+// DOM props
+if (el.props) {
+  data += `domProps:{${genProps(el.props)}},`
+}
+```
+
+最终 会添加到 domProps 对应的数组中 上面例子中的 span 最终生成的 render 函数如下
+
+    _c('span',{domProps:{"textContent":_s(msg)}})
+
