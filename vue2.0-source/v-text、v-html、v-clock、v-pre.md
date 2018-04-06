@@ -110,3 +110,12 @@ function updateDOMProps (oldVnode: VNodeWithData, vnode: VNodeWithData) {
 如果 key === 'value' 这里应该对 input select 等标签的特殊处理 否则 直接设置 elm.textContent = cur 以此来改变文本内容
 
     v-html
+
+v-html 和 v-text 的用法和处理流程基本完全一样 唯一的区别就是最终 v-html 设置的 elm.innerHTML = cur
+
+用法示例如下
+
+  <span v-html="msg"></span>
+
+  v-clock
+
