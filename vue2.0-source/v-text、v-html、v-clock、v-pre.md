@@ -124,3 +124,51 @@ v-html 和 v-text 的用法和处理流程基本完全一样 唯一的区别就�
 
 因为我们的模板在编译的过程中 页面中是会显示Mustache标签的 该指令就是在模板编译之后 被删除 
 我们可以添加 [v-clock]{display:none} 来防止用户感知到 Mustache 标签出现
+
+  v-pre
+
+v-pre 表示会跳过该标签及其子元素的编译
+
+在编译的模板时的 start 回调函数中 有如下片段
+
+```javascript
+if (!inVPre) {
+  processPre(element)
+  if (element.pre) {
+    inVPre = true
+  }
+}
+ if (inVPre) {
+   processRawAttrs(element)
+ } else {
+   ...
+ }
+ ```
+
+processPre 函数会获取 element 上的 v-pre 属性 如果有则设置 element.pre = true 同时设置 inVPre = true
+
+接下来的处理 会走进 processRawAttrs 函数，else 块内对各种指令 属性等的处理 都不会执行
+
+```javascript
+function processRawAttrs (el) {
+  const l = el.attrsList.length
+  if (l) {
+    const attrs = el.attrs = new Array(l)
+    for (let i = 0; i < l; i++) {
+      attrs[i] = {
+        name: el.attrsList[i].name,
+        value: JSON.stringify(el.attrsList[i].value)
+      }
+    }
+  } else if (!el.pre) {
+    // non root node in pre blocks with no attributes
+    el.plain = true
+  }
+}
+```
+
+这里是对属性的处理 如果 el.attrsList 不为空数组 则直接循环 el.attrList上的属性添加到 el.attrs 上 
+否则 如果当前没有设置 v-pre 指令（是设置 v-pre 元素的子元素） 则设置 el.plain = true
+
+因为我们不编译的是整个子树 而不是单个元素 Vue中就是通过 inVPre 来标示的 我们 parse 的整个过程就是入栈出栈
+当子元素都编译完 会走到当前元素的end处理 此时再设置 inVPre = false 来结束不编译的内容
