@@ -119,3 +119,8 @@ v-html 和 v-text 的用法和处理流程基本完全一样 唯一的区别就�
 
   v-clock
 
+这个指令用的比较少 它的 ast 生成和上面讲的普通指令一样 在 genDirectives 时 baseDirectives 中包含了clock
+但是最终返回的gen是一个空函数 最终它也不会添加到directives数组中 之后也就没有了对它的处理
+
+因为我们的模板在编译的过程中 页面中是会显示Mustache标签的 该指令就是在模板编译之后 被删除 
+我们可以添加 [v-clock]{display:none} 来防止用户感知到 Mustache 标签出现
