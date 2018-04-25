@@ -29,3 +29,58 @@ function checkForAliasModel (el, value) {
   }
 }
 ```
+
+上面的校验告诉我们 不能用for循环的值来作为value 如下例子会报错
+
+```html
+<div id="app">
+  <p v-for="item in value">
+    <input v-model="item"/>
+  </p>
+</div>
+<script type="text/javascript">
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      value: ['test','test1']
+    }
+  }).$mount('#app');
+</script>
+```
+
+类似于 v-text v-html 等指令 在函数生成时 platformDirectives中内置了对 v-model 的处理
+
+```javascript
+export default function model (
+  el: ASTElement,
+  dir: ASTDirective,
+  _warn: Function
+): ?boolean {
+  warn = _warn
+  const value = dir.value
+  const modifiers = dir.modifiers
+  const tag = el.tag
+  const type = el.attrsMap.type
+  // input的type不支持动态绑定
+  // file类型是只读的，不能用v-model
+  ...
+  if (tag === 'select') {
+    genSelect(el, value, modifiers)
+  } else if (tag === 'input' && type === 'checkbox') {
+    genCheckboxModel(el, value, modifiers)
+  } else if (tag === 'input' && type === 'radio') {
+    genRadioModel(el, value, modifiers)
+  } else if (tag === 'input' || tag === 'textarea') {
+    genDefaultModel(el, value, modifiers)
+  } else if (!config.isReservedTag(tag)) {
+    genComponentModel(el, value, modifiers)
+    // component v-model doesn't need extra runtime
+    return false
+  } else if (process.env.NODE_ENV !== 'production') {
+    ...
+	// 其它标签不支持v-model
+  }
+  // ensure runtime directive metadata
+  return true
+}
+```
