@@ -84,3 +84,7 @@ export default function model (
   return true
 }
 ```
+
+可以看出 v-model的处理 主要分为四种情况 select checkbox radio input || textarea 以及自定义标签
+
+只有自定义标签返回false 其他返回true 说明自定义标签不会把 v-model 指令添加到 directives 中 也就不会再patch过程中有钩子函数操作 其他情况 在patch过程中 还会有一些操作
