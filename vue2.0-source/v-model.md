@@ -188,3 +188,13 @@ export function parseModel (val: string): Object {
 如果有中括号 且是以中括号结尾 则会执行一个while循环 大体的过程是遍历每一个字符 最终找到与最后一个]对应的[ 
   
 然后把[之前的内容放到exp中 中括号中间的内容放到idx中 例如 value 值为value[0] 最终解析之后返回的值为 {exp:"value",idx:"0"}
+
+回到 genAssignmentCode 如果 modelRs.idx为null 则直接给value赋值 这时就会直接触发模板的更新 否则如果exp 不是数组 也直接赋值 如果exp是数组 则会直接删除之前的值 并在原来的位置插入新值
+
+genSelect的最后 会通过 addHandler 方法(在事件处理中讲过事件处理的整体流程) 把生成的回调函数内容 添加到元素的change事件中 所有改变下拉框的值时 会触发change事件 进而修改value的值 触发模板的整体更新
+
+我们上面的例子 最终生成的render函数字符串如下
+
+"with(this){return _c('div',{attrs:{"id":"app"}},[_c('select',{directives:[{name:"model",rawName:"v-model",value:(value),expression:"value"}],on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); value=$event.target.multiple ? $$selectedVal : $$selectedVal[0]}}},[_c('option',[_v("1")]),_v(" "),_c('option',[_v("2")]),_v(" "),_c('option',[_v("3")])]),_v(" "),_c('p',[_v(_s(value))])])}"
+
+整体比较长 我们注意到 select的data的directives中包含了我们的v-model指令 并且on中有一个change事件 对应的函数体就是刚才我们讲过的处理操作
