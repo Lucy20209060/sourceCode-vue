@@ -190,6 +190,7 @@ Compiler.prototype = {
 
         // 是否存在 {{}} 以此确定是否有绑定值
         if(!content.match(reg)) return;//没有绑定数据，不处理
+        // 创建一个新的空白的文档片段
         var fragment = document.createDocumentFragment();
 
         while(match = reg.exec(content)){
@@ -222,6 +223,7 @@ Compiler.prototype = {
     replaceElement:function(el,fragment){
         var parent = el.parentNode;
         if(parent){
+            // fragment 替换掉 el   56 => {{a}}
             parent.replaceChild(fragment,el);
         }
     },

@@ -7,7 +7,9 @@
 <body>
 <div id="test">
 	<input type="text" >
-	<div>{{a}}</div>
+
+	<div class="name">哈哈哈</div>
+	<div class="div">{{a}}</div>
 </div>
 <script>
 
@@ -79,6 +81,14 @@
 	// console.log(a.b)
 
 
+	// var name = document.getElementsByClassName('name');
+	var div = document.getElementsByClassName('div')[0];
+	console.log(div)
+
+	var fragment = document.createDocumentFragment();
+	element = document.createTextNode('嘿嘿诶嘿');
+    fragment.appendChild(element);
+	document.getElementById('test').replaceChild(fragment,div)
 </script>
 </body>
 </html>
