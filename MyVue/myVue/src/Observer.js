@@ -24,6 +24,7 @@ var Observer = function(data){
 
 Observer.prototype.transform = function(data){
     for(var key in data){
+        // console.log('---',data[key])
         this.defineReactive(data,key,data[key]);
     }
 };
@@ -50,11 +51,11 @@ Observer.prototype.defineReactive = function(data,key,value){
                 //JS的浏览器单线程特性，保证这个全局变量在同一时间内，只会有同一个监听器使用
                 dep.addSub(Dep.target);
             }
-            console.log("intercept get:"+key,value);
+            // console.log("intercept get:"+key,value);
             return value;
         },
         set:function(newVal){
-            console.log("intercept set:"+key,newVal);
+            // console.log("intercept set:"+key,newVal);
             if(newVal == value){
                 return;
             }

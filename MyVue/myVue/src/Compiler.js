@@ -131,21 +131,24 @@ function parseExpression(exp) {
     return res;
 }
 
+
+function compile(el,vm){
+    // 默认通过id 获取对应的元素
+    var element = document.getElementById(el);
+    if(!element) return;
+    return new Compiler(element,vm);
+}
+
 var Compiler = function(el,vm){
     this.vm = vm;
     this.el = el;
     this.compile(el);
 };
 
-function compile(el,vm){
-    var element = document.getElementById(el);
-    if(!element) return;
-    return new Compiler(element,vm);
-}
-
 Compiler.prototype = {
     compile:function(el){
         var self = this;
+        // 是否是纯文字节点
         if(self.isTextElement(el)){
             this.compileTextElement(el);
         }else {
@@ -185,7 +188,7 @@ Compiler.prototype = {
         var lastIndex = 0,normalText;
         var content = el.textContent;
 
-
+        // 是否存在 {{}} 以此确定是否有绑定值
         if(!content.match(reg)) return;//没有绑定数据，不处理
         var fragment = document.createDocumentFragment();
 
@@ -230,11 +233,11 @@ Compiler.prototype = {
     isEventDirective:function(name){
         return name.indexOf("on") == 0;
     },
-    //是否是纯文字节点
+    //是否是纯文字节点 文本
     isTextElement:function(node){
         return node.nodeType == 3;
     },
-    //是否是普通节点
+    //是否是普通节点 元素
     isElement:function(node){
         return node.nodeType == 1;
     },

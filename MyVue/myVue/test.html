@@ -6,22 +6,77 @@
 </head>
 <body>
 <div id="test">
-
+	<input type="text" >
+	<div>{{a}}</div>
 </div>
 <script>
+
+	var MVVM = function(options){
+		this.$data = options.data;
+		this.$el = options.el;
+		// 将数据和方法挂到this上
+		this._proxy(options.data);
+		this._proxy(options.methods);
+	}
+	MVVM.prototype._proxy = function(data){
+		//添加
+		var self = this;
+		for(var key in data) {
+			(function(key){
+				Object.defineProperty(self,key,{
+					get:function(){
+						//Watcher中使用这种方式触发自定义的get，所以_proxy需要在Compile之前调用
+						// 拿到值
+						return data[key];
+					},
+					set:function(newVal){
+						// 赋值 newVal 就是get的值
+						data[key] = newVal;
+					}
+				})
+			})(key);
+
+		}
+
+	};
+
+	new MVVM({
+		el:'test',
+		data:{
+			a: 'A',
+			b: 'B',
+			c:{
+				d: 'D',
+				e: 'F',
+				g: {
+					h: 'H'
+				}
+			}
+		},
+		methods:{
+			clickBtn:function(){
+				this.a = "clicked";
+			}
+		}
+	})
+
+
+
+
+
 
 	var a= {}
 	Object.defineProperty(a,"b",{
 		set:function(newValue){
-			console.log("你要赋值给我,我的新值是",newValue)
+			// console.log("你要赋值给我,我的新值是",newValue)
 		},
 		get:function(){
-			console.log("你取我的值")
+			// console.log("你取我的值")
 			return 2 //注意这里，我硬编码返回2
 		}
 	})
 	a.b = '1'   //打印 你要赋值给我,我的新值是1
-	console.log(a.b)
+	// console.log(a.b)
 
 
 </script>
