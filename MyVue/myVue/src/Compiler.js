@@ -223,7 +223,7 @@ Compiler.prototype = {
     replaceElement:function(el,fragment){
         var parent = el.parentNode;
         if(parent){
-            // fragment 替换掉 el   56 => {{a}}
+            // fragment 替换掉 el   56 替换掉 {{a}}
             parent.replaceChild(fragment,el);
         }
     },
