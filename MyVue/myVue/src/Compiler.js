@@ -208,6 +208,7 @@ Compiler.prototype = {
             fragment.appendChild(element);
             //绑定占位符与表达式
             this.bind(element,exp,'text');
+            console.log('element',element)
         }
         if(lastIndex < content.length){
             //剩余的普通文本
@@ -231,7 +232,7 @@ Compiler.prototype = {
     isDirective:function(name){
         return name.indexOf("v-") == 0;
     },
-    //是否是事件指令
+    //是否是事件指令 on:click
     isEventDirective:function(name){
         return name.indexOf("on") == 0;
     },
