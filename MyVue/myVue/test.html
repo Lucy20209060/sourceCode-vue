@@ -20,7 +20,7 @@
 		// 将数据和方法挂到this上
 		this._proxy(options.data);
 		this._proxy(options.methods);
-		compile(this);
+		compile(this, document.getElementById(this.$el));
 	}
 	MVVM.prototype._proxy = function(data){
 		//添加
@@ -44,43 +44,37 @@
 
 	};
 
-	function compile(_this) {
+	function compile(_this, element) {
 		// console.log(_this)
 		var reg = /\{\{(.*?)\}\}/g;
-		var element = document.getElementById(_this.$el);
 		if(!element) return;
+
+		// 元素节点
 		if(element.nodeType === 1){
 			element.childNodes.forEach(function (node) {
-				if(node.nodeType === 3){
-					var textContent = node.textContent;
-					var mat = textContent.match(reg);
-					if(mat && mat.length > 0){
-						for(let i in mat){
-							var sign = mat[i].slice(2,-2);
-							/**
-							 * 字符串替换 
-							 * 哈哈哈哈{{c.g.h}}嘿嘿嘿嘿{{a}} ==> 哈哈哈哈H嘿嘿嘿嘿A
-							*/
-							textContent = textContent.replace(`${mat[i]}`,find(_this.$data, sign))
-							// console.log(textContent)
-						}
-						var fragment = document.createDocumentFragment();
-						var el = document.createTextNode(textContent);
-						fragment.appendChild(el);
-						replaceElement(node, fragment)
-					}
-					
-				}
-
-				
-				
+				// 递归调用
+				compile(_this, node);
 			});
-			
-
-		}else{
-
 		}
-		// return new Compiler(element,_this);
+		// 文本节点
+		else if(element.nodeType === 3){
+			var textContent = element.textContent;
+			var mat = textContent.match(reg);
+			if(mat && mat.length > 0){
+				for(let i in mat){
+					var sign = mat[i].slice(2,-2);
+					/**
+					 * 字符串替换 
+					 * 哈哈哈哈{{c.g.h}}嘿嘿嘿嘿{{a}} ==> 哈哈哈哈H嘿嘿嘿嘿A
+					*/
+					textContent = textContent.replace(`${mat[i]}`,find(_this.$data, sign))
+				}
+				var fragment = document.createDocumentFragment();
+				var el = document.createTextNode(textContent);
+				fragment.appendChild(el);
+				replaceElement(element, fragment)
+			}
+		}
 	}
 
 	function replaceElement(el,fragment){
@@ -112,7 +106,7 @@
 	new MVVM({
 		el:'test',
 		data:{
-			a: 'AAAA',
+			a: 'A',
 			b: 'B',
 			c:{
 				d: 'D',
