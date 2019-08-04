@@ -45,6 +45,7 @@
                     let success = Reflect.set(target, key, value);
                     // 更新key值所有的绑定
                     if(success)_this._binding[key].map(item => { item.update()});
+                    console.log(_this._binding)
                     return success;
                 }
             })
