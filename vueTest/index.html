@@ -8,19 +8,20 @@
     <script src="./vue.js"></script>
 </head>
 <body>
-	<div id='app'>
-		<p v-if='value === 1'>v-if</p>
-		<p v-else-if='value === 2'>v-else-if</p>
-		<p v-else-if='value === 3'>v-else-if</p>
-		<p v-else>v-else</p>
-	</div>
+    <div id='app'>
+        <p v-for='(item, index) in arr'>{{item.name}}-{{index}}</p>
+    </div>
 </body>
-<script>
-	var vm = new Vue({
-		el: '#app',
-		data: {
-			value: 4
-		}
-	})
-</script>
+<script type="text/javascript">
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        arr:[
+            {id: 1, name: 'Lucy'},
+            {id: 2, name: 'Jack'},
+            {id: 3, name: 'Tom'}
+        ]
+      }
+    })
+  </script>
 </html>

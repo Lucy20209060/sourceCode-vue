@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <p>
+            <input 
+                class="text" 
+                type="text" 
+                l-model="text"
+                @change="onChange"
+            />
+        </p>
+        <p>
+            <textarea l-model="text"></textarea>
+        </p>
+        <p l-text="text"></p>
+        <p>
+            <button @click="func1">点击</button>
+        </p>
+    </div>
+</body>
+<script>
+
+    class LU {
+        constructor(options){
+            this.$el = document.querySelector(options.el);
+            this.$data = options.data;
+            this.$methods = options.methods;
+            this._binding = {};
+            this._observe(this, '$data'); // 监听数据
+            this._compile(this.$el); // 编译html，监听事件
+        }
+
+        _observe(obj, key) {
+            var data = obj[key];
+            var _this = this;
+            obj[key] = new Proxy(data,{
+                set(target, key, value) {
+                    let success = Reflect.set(target, key, value);
+                    // 更新key值所有的绑定
+                    if(success)_this._binding[key].map(item => { item.update()});
+                    return success;
+                }
+            })
+            // 遍历对象，如果元素是数组或对象，递归监听
+            const keys = Object.keys(data)
+            keys.map(item => {
+                if (data[item] !== null && (typeof data[item]) === 'object') {
+                    this._observe(data, item)
+                }
+            })
+        }
+
+        _compile(el) {
+            var nodes = Array.prototype.slice.call(el.childNodes);
+            var data = this.$data;
+            nodes.map((node, index)=>{
+                // console.log(node)
+                if (node.childNodes.length > 0) this._compile(node);
+                if(node.nodeType === 1){
+                    var l_text = node.getAttribute('l-text');
+                    var l_model = node.getAttribute('l-model');
+                    var clickName = node.getAttribute('@click');
+                    var changeName = node.getAttribute('@change');
+
+                    // 点击事件
+                    if(clickName){
+                        const handler = this.$methods[clickName].bind(data);
+                        node.addEventListener('click', handler)
+                    }
+                    // change事件
+                    if(changeName){
+                        const handler = this.$methods[changeName].bind(data);
+                        node.addEventListener('input',handler);
+                    }
+
+                    // 当前标签
+                    var nodeName = node.nodeName.toLowerCase();
+                    // input l-model
+                    if(l_model && nodeName === 'input'){
+                        node.value = this.$data[l_model];
+                        this._pushWatcher(new Watcher(node,'value',data,l_model));
+                        node.addEventListener('input',() => {data[l_model] = node.value})
+                    }
+                    // textarea l-model
+                    if(l_model && nodeName === 'textarea'){
+                        this._pushWatcher(new Watcher(node,'value',data,l_model))
+                        node.value = this.$data[l_model];
+                    }
+                    // 普通元素 l-text
+                    if(l_text && nodeName !== 'input'){
+                        node.innerText = this.$data[l_text];
+                        this._pushWatcher(new Watcher(node,'innerHTML',data,l_text))
+                    }
+                    
+                }
+            })
+        }
+
+        // 添加watcher
+        _pushWatcher (watcher) {
+            if (!this._binding[watcher.key]) this._binding[watcher.key] = []
+            this._binding[watcher.key].push(watcher)
+        }
+    }
+
+    class Watcher {
+        constructor (node,attr,data,key) {
+        this.node = node
+        this.attr = attr
+        this.data = data
+        this.key = key
+        }
+        update () {
+            this.node[this.attr] = this.data[this.key]
+        }
+    }
+
+
+
+    new LU({
+        el: '#app',
+        data: {
+            text: '超哥真帅',
+            age: 20
+        },
+        methods: {
+            func1(){
+                this.text = '呵呵';
+            },
+            onChange(){
+                console.log(this.text)
+            }
+        }
+    })  
+</script>
+</html>

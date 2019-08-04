@@ -9595,7 +9595,8 @@
               var name = element.slotTarget || '"default"'
               ;(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element;
             }
-            currentParent.children.push(element);
+						currentParent.children.push(element);
+						console.log('element',currentParent)
             element.parent = currentParent;
           }
         }
@@ -9952,7 +9953,8 @@
   
   
     function parseFor (exp) {
-      var inMatch = exp.match(forAliasRE);
+			var inMatch = exp.match(forAliasRE);
+			console.log('inMatch',inMatch,exp)
       if (!inMatch) { return }
       var res = {};
       res.for = inMatch[2].trim();
@@ -9973,6 +9975,7 @@
     function processIf (el) {
       var exp = getAndRemoveAttr(el, 'v-if');
       if (exp) {
+				console.log(exp,el)
         el.if = exp;
         addIfCondition(el, {
           exp: exp,
@@ -9980,10 +9983,12 @@
         });
       } else {
         if (getAndRemoveAttr(el, 'v-else') != null) {
+					console.log(getAndRemoveAttr(el, 'v-else'),el)
           el.else = true;
         }
         var elseif = getAndRemoveAttr(el, 'v-else-if');
         if (elseif) {
+					console.log(elseif,el)
           el.elseif = elseif;
         }
       }
@@ -10006,7 +10011,8 @@
     }
   
     function findPrevElement (children) {
-      var i = children.length;
+			var i = children.length;
+			console.log('children',children)
       while (i--) {
         if (children[i].type === 1) {
           return children[i]
