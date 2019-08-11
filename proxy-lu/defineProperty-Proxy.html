@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    var obj = {
+        name: [1, 2]
+    }
+    Object.defineProperty(obj,'name',{
+        get:function(value){
+            console.log('get')
+            return value;
+        },
+        set:function(newVal){
+            console.log('set')
+            value = newVal;
+        }
+    })
+    obj.name[2] = 3
+
+    console.log(obj.name)
+
+</script>
+</html>
